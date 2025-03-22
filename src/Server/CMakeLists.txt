@@ -16,6 +16,10 @@ target_link_libraries(Server PRIVATE
         SQLite::SQLite3
 )
 
+if (USE_LLVM EQUAL ON)
+    configure_for_llvm(Server)
+endif ()
+
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_compile_options(Server PRIVATE "/D_WIN32_WINNT=0x0601" "/utf-8")
 endif()

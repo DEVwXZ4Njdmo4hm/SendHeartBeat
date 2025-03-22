@@ -18,6 +18,10 @@ include(CheckOS)
 
 include (ApplyProjectConfig)
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+	include(SetupLLVM)
+endif ()
+
 find_package(Asio REQUIRED)
 if (ASIO_FOUND)
 	message(STATUS "Found Asio, version ${ASIO_VERSION}")

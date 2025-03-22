@@ -20,6 +20,10 @@ target_link_libraries(Client PRIVATE
         BOOST::ASIO
 )
 
+if (USE_LLVM EQUAL ON)
+    configure_for_llvm(Client)
+endif ()
+
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_compile_options(Client PRIVATE "/D_WIN32_WINNT=0x0601" "/utf-8")
 
