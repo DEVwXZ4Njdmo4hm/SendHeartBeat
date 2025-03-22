@@ -1,6 +1,6 @@
 # Package Information for pkg-config
 
-prefix=@CMAKE_SOURCE_DIR@/3rd-party/sqlite3/@CMAKE_SYSTEM_NAME@
+prefix=@CMAKE_SOURCE_DIR@/3rd-party/sqlite3/linux
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib64
 includedir=${prefix}/include
