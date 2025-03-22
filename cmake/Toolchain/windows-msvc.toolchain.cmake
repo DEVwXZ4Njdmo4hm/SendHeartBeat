@@ -1,0 +1,34 @@
+##
+#  Copyright 2025 - Capri XXI (qxwzj@hotmail.com)
+#  CMake Toolchain File
+#  Targeting to: x86_64-windows-msvc
+##
+
+set(CMAKE_SYSTEM_NAME Windows)
+
+set(CMAKE_C_COMPILER cl.exe)
+set(CMAKE_CXX_COMPILER cl.exe)
+set(CMAKE_RC_COMPILER rc.exe)
+
+if (CMAKE_GENERATOR MATCHES "Visual Studio")
+    set(CMAKE_VS_PLATFORM_NAME "x64")
+    set(CMAKE_GENERATOR_PLATFORM "x64")
+endif ()
+
+# Force to use Visual Studio 2022 or VC++ 143 Built tools
+set(CMAKE_VS_PLATFORM_TOOLSET "v143")
+set(CMAKE_VS_PLATFORM_TOOLSET_VERSION "143")
+
+# Force to use Windows SDK Version 10.0.22000.0 and later
+set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_MIN_VERSION "10.0.22000.0")
+
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DDEVELOPMENT_BUILD -DENABLE_LOGGING)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_definitions(-DPRODUCTION_BUILD -DPERFORMANCE_MODE)
+endif()

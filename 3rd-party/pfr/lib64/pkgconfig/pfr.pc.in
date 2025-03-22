@@ -1,0 +1,13 @@
+# Package Information for pkg-config
+
+prefix="@CMAKE_SOURCE_DIR@/3rd-party/pfr"
+exec_prefix=${prefix}
+includedir=${prefix}/include
+
+Name: PFR
+Description: A C++14 library for very basic reflection.
+Version: 2.2.0
+Cflags: -I${includedir}
+Lflags:
+Requires:
+Requires.private:

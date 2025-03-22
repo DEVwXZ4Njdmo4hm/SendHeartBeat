@@ -1,0 +1,108 @@
+{
+    "version": 3,
+    "configurePresets": [
+      {
+        "name": "base",
+        "hidden": true,
+        "generator": "Ninja",
+        "cacheVariables": {
+          "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        }
+      },
+      {
+        "name": "windows-msvc-x64",
+        "hidden": true,
+        "inherits": "base",
+        "toolchainFile": "${sourceDir}/cmake/Toolchain/windows-msvc.toolchain.cmake",
+        "condition": {
+          "type": "equals",
+          "lhs": "${hostSystemName}",
+          "rhs": "Windows"
+        },
+        "architecture": {
+          "value": "x64",
+          "strategy": "external"
+        },
+        "cacheVariables": {
+          "TARGET_TRIPLE": "x86_64-pc-windows-msvc"
+        }
+      },
+      {
+        "name": "Windows x64 Debug",
+        "inherits": "windows-msvc-x64",
+        "binaryDir": "${sourceDir}/build/x86_64-pc-windows-msvc/Debug",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug"
+        }
+      },
+      {
+        "name": "Windows x64 Release",
+        "inherits": "windows-msvc-x64",
+        "binaryDir": "${sourceDir}/build/x86_64-pc-windows-msvc/Release",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release"
+        }
+      },
+      {
+        "name": "linux-x64-base",
+        "inherits": "base",
+        "hidden": true,
+        "condition": {
+            "type": "equals",
+            "lhs": "${hostSystemName}",
+            "rhs": "Linux"
+        },
+        "architecture": {
+          "value": "x64",
+          "strategy": "external"
+        },
+        "cacheVariables": {
+          "TARGET_TRIPLE": "x86_64-pc-linux-gnu"
+        }
+      },
+      {
+        "name": "linux-llvm-x64-base",
+        "inherits": "linux-x64-base",
+        "hidden": true,
+        "toolchainFile": "${sourceDir}/cmake/Toolchain/linux-llvm.toolchain.cmake"
+      },
+      {
+        "name": "Linux x64 LLVM Debug",
+        "inherits": "linux-llvm-x64-base",
+        "binaryDir": "${sourceDir}/build/x86_64-pc-linux-gnu/Debug",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug"
+        }
+      },
+      {
+        "name": "Linux x64 LLVM Release",
+        "inherits": "linux-llvm-x64-base",
+        "binaryDir": "${sourceDir}/build/x86_64-pc-linux-gnu/Release",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release"
+        }
+      },
+      {
+        "name": "linux-gcc-x64-base",
+        "inherits": "linux-x64-base",
+        "hidden": true,
+        "toolchainFile": "${sourceDir}/cmake/Toolchain/linux-gcc.toolchain.cmake"
+      },
+      {
+        "name": "Linux x64 GCC Debug",
+        "inherits": "linux-gcc-x64-base",
+        "binaryDir": "${sourceDir}/build/x86_64-pc-linux-gnu/Debug",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug"
+        }
+      },
+      {
+        "name": "Linux x64 GCC Release",
+        "inherits": "linux-gcc-x64-base",
+        "binaryDir": "${sourceDir}/build/x86_64-pc-linux-gnu/Release",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release"
+        }
+      }
+    ]
+  }

@@ -1,0 +1,13 @@
+##
+# Project configuration file
+# To use CMake variables, use ${VAR_NAME}
+# To use environment variables, use $ENV{VAR_NAME}
+##
+
+ASIO_DIR = ${CMAKE_SOURCE_DIR}/3rd-party/asio
+
+PFR_DIR = ${CMAKE_SOURCE_DIR}/3rd-party/pfr
+
+LHWM_WRAPPER_DIR = ${CMAKE_SOURCE_DIR}/3rd-party/lhwm-cpp-wrapper
+
+SQLITE_META_DIR = ${CMAKE_SOURCE_DIR}/3rd-party/sqlite3
