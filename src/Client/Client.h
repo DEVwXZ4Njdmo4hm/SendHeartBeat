@@ -4,6 +4,7 @@
 #include <regex>
 #include <ranges>
 #include <string>
+#include <thread>
 #include <asio.hpp>
 
 #if defined(_WIN32)
