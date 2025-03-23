@@ -5,6 +5,9 @@ add_executable(Server)
 target_sources(Server
         PRIVATE
         Server.cpp
+        Watcher.cpp
+        DataHandler.cpp
+        WriteToDB.cpp
 )
 
 set_target_properties(Server PROPERTIES CXX_STANDARD 23)
