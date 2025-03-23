@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <print>
 #include <string>
 
 #include "Utils.h"
@@ -22,7 +23,7 @@ namespace HeartBeat {
         std::array<u_char, STRING_SIZE> computerFirmwareManufacturer;
 
         static void set(
-            MachineInfo machInfo,
+            MachineInfo& machInfo,
             const std::string& boardModel, const std::string& boardSerial,
             const std::string& computerModel, const std::string& computerSerial,
             const std::string& computerSKU, const std::string& computerUUID,

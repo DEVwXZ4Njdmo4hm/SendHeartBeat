@@ -58,6 +58,12 @@ namespace HeartBeat {
         des[charsToCopy] = '\0';
     }
 
+    template <size_t SIZE>
+    std::string UCharArrayToString(const std::array<u_char, SIZE>& arr)
+    {
+        return std::string(reinterpret_cast<const char*>(arr.data()));
+    }
+
     inline std::chrono::time_point<std::chrono::system_clock> GetCurrentTimestamp() {
         return std::chrono::system_clock::now();
     }
