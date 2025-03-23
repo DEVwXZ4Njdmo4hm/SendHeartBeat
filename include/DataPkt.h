@@ -108,8 +108,8 @@ namespace HeartBeat {
 
         std::chrono::time_point<std::chrono::system_clock> timestamp;
 
-        DataPkt(const bool heartBeat, const MachineInfo& machInfo, const CpuInfo& cpuInfo, const GpuInfo& gpuInfo)
-            : HeartBeat(heartBeat), machInfo(machInfo), cpuInfo(cpuInfo), gpuInfo(gpuInfo),
+        DataPkt(const MachineInfo& machInfo, const CpuInfo& cpuInfo, const GpuInfo& gpuInfo)
+            : HeartBeat(true), machInfo(machInfo), cpuInfo(cpuInfo), gpuInfo(gpuInfo),
               timestamp(GetCurrentTimestamp()) {}
     };
 };
