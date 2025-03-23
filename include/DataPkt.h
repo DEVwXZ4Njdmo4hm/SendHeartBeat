@@ -45,9 +45,9 @@ namespace HeartBeat {
         std::array<u_char, STRING_SIZE> computerFirmwareVersion {};
         std::array<u_char, STRING_SIZE> computerFirmwareManufacturer {};
 
-        CpuInfo cpuInfo;
-        GpuInfo gpuInfo;
+        CpuInfo cpuInfo {};
+        GpuInfo gpuInfo {};
 
-        std::chrono::time_point<std::chrono::system_clock> timestamp;
+        std::chrono::time_point<std::chrono::system_clock> timestamp {};
     };
 };
