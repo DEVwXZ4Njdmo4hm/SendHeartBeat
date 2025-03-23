@@ -5,6 +5,7 @@
 #include <ranges>
 #include <string>
 #include <thread>
+#include <iostream>
 #include <asio.hpp>
 
 #if defined(_WIN32)
@@ -22,9 +23,10 @@
 #endif
 
 #include <DataPkt.h>
-#include <Utils.h>
 
 namespace HeartBeat {
+    inline MachineInfo machInfo {};
+
     inline std::string boardModel = "Unknown";
     inline std::string boardSerial = "Unknown";
     inline std::string computerModel = "Unknown";
@@ -46,6 +48,8 @@ namespace HeartBeat {
     inline std::string path_temp_gpuCore;
     inline std::string path_pwr_gpuPackage;
 
+    inline std::atomic_bool worker_signal { true };
+
 #ifdef _WIN32
     inline std::map<std::string, std::vector<std::tuple<std::string, std::string, std::string>>> sensorMap;
     inline bool sensorMapInitialized = false;
@@ -55,6 +59,7 @@ namespace HeartBeat {
         sensorMapInitialized = true;
     }
 
+    /*
     // Copilot: Write a function for me that retrieves the sensor map from LHWM library.
     inline void RetriveSensorMap()
     {
@@ -72,6 +77,7 @@ namespace HeartBeat {
             }
         }
     }
+    */
 #endif
 
     inline bool machModelInitialized = false;
@@ -105,4 +111,24 @@ namespace HeartBeat {
      */
     void GetGpuInfo(GpuInfo& gpuInfo);
 
+    /**
+     *  Sends the serialized data to the server using ASIO library.
+     *  @param server The server address to send the data to.
+     *  @param port The server port to send the data to.
+     *  @param data The serialized data to be sent.
+     */
+    void Sender(std::string server, port_t port, serialized_data_t<DataPkt>& data);
+
+    void DataHandler(std::string server, port_t port);
+
+    inline bool IsValidIPv4(const std::string& ip)
+    {
+        try {
+            auto address = asio::ip::make_address(ip);
+            return address.is_v4();
+        }
+        catch (const std::exception& e) {
+            return false;
+        }
+    }
 }

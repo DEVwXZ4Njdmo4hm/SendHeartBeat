@@ -2,69 +2,40 @@
 
 using namespace HeartBeat;
 
-int main()
+int main(int argc, char* argv[])// Initialize the COM library
 {
-    std::println("Hello, this is Client!");
-    std::println("ASIO Version: {}", ASIO_VERSION);
-    std::println("PFR Version: {}", PFR_VERSION);
-
-#ifdef _WIN32
-
-    InitSensorMap();
-
-    std::println("Sensor Map Size: {}", sensorMap.size());
-#endif
-
-    GetMachModel();
-
-    // print all information about the machine
-    std::println("\n\n");
-    std::println("Motherboard Model: {}", boardModel);
-    std::println("Motherboard Serial: {}", boardSerial);
-    std::println("Computer Model: {}", computerModel);
-    std::println("Computer Serial: {}", computerSerial);
-    std::println("Computer SKU: {}", computerSKU);
-    std::println("Computer UUID: {}", computerUUID);
-    std::println("Computer Firmware Version: {}", computerFirmwareVersion);
-    std::println("Computer Firmware Manufacturer: {}", computerFirmwareManufacturer);
-
-    std::println("\n\n");
-
-    CpuInfo cpuTemp {};
-    GpuInfo gpuTemp {};
-
-    GetCpuSensorID();
-    GetGpuSensorID();
-
-    for ([[maybe_unused]] auto _ : std::views::iota(0, 10))
+    if (argc != 3)
     {
-        GetCpuInfo(cpuTemp);
-        GetGpuInfo(gpuTemp);
+        std::println(stderr, "Usage: {} <server> <port>", argv[0]);
+        return 1;
+    }
 
-        std::println(
-            "CPU Load: {:.2f}%, "
-            "CPU Max Temp : {:.2f}°C, CPU Average Temp: {:.2f}°C, CPU Package Temp: {:.2f}°C, "
-            "CPU Core Volt: {:.2f}V, CPU Package Power: {:.2f}W, CPU Core Power: {:.2f}W",
-            cpuTemp.load_cpuTotal,
-            cpuTemp.temp_coreMax,
-            cpuTemp.temp_coreAvg,
-            cpuTemp.temp_cpuPackage,
-            cpuTemp.volt_cpuCore,
-            cpuTemp.pwr_cpuPackage,
-            cpuTemp.pwr_cpuCore
-        );
+    std::string server = argv[1];
+    port_t port = static_cast<port_t>(std::stoi(argv[2]));
 
-        std::println(
-            "GPU Load: {:.2f}%, GPU Core Clock: {:.2f}MHz, GPU Core Temp: {:.2f}°C, GPU Package Power: {:.2f}W",
-            gpuTemp.load_gpuCore,
-            gpuTemp.clk_gpuCore,
-            gpuTemp.temp_gpuCore,
-            gpuTemp.pwr_gpuPackage
-        );
+    if (server.empty() or not IsValidIPv4(server))
+    {
+        std::println(stderr, "Invalid server.");
+        return 2;
+    }
 
-        std::println("\n");
+    if (not port)
+    {
+        std::println(stderr, "Invalid port.");
+        return 3;
+    }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::thread DataHandler_thr(DataHandler, server, port);
+
+    std::println(stdout, "HeartBeat Client started.");
+    std::println(stdout, "Press any key to exit.");
+    std::cin.get();
+
+    worker_signal = false;
+
+    if (DataHandler_thr.joinable())
+    {
+        DataHandler_thr.join();
     }
 
     return 0;

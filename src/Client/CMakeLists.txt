@@ -10,6 +10,8 @@ target_sources(Client
         GetMachModel.cpp
         GetCpuSensorID.cpp
         GetGpuSensorID.cpp
+        Sender.cpp
+        DataHandler.cpp
 )
 
 set_target_properties(Client PROPERTIES CXX_STANDARD 23)
@@ -25,7 +27,7 @@ if (USE_LLVM EQUAL ON)
 endif ()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    target_compile_options(Client PRIVATE "/D_WIN32_WINNT=0x0601" "/utf-8")
+    target_compile_options(Client PRIVATE "/D_WIN32_WINNT=0x0601" "/utf-8" "/MP" "/Zm80")
 
     target_link_libraries(Client
             PRIVATE
