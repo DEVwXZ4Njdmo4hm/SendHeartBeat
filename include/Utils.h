@@ -7,6 +7,8 @@
 
 namespace HeartBeat {
 
+    using port_t = uint16_t;
+
     template <typename T>
     void SerializeStruct(std::array<std::byte, sizeof(T)>& buffer, const T& obj)
     {
