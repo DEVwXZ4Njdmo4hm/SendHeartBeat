@@ -47,6 +47,17 @@ namespace HeartBeat {
         );
     }
 
+    template <size_t SIZE>
+    void StringToArray(const std::string& src, std::array<u_char, SIZE>& des)
+    {
+        des.fill(0);
+
+        size_t charsToCopy = std::min(src.size(), SIZE - 1);
+
+        std::copy(std::begin(src), std::begin(src) + charsToCopy, std::begin(des));
+        des[charsToCopy] = '\0';
+    }
+
     inline std::chrono::time_point<std::chrono::system_clock> GetCurrentTimestamp() {
         return std::chrono::system_clock::now();
     }

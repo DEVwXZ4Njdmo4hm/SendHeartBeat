@@ -7,20 +7,9 @@
 
 namespace HeartBeat {
     constexpr size_t STRING_SIZE = 64;
-    
+
     template <typename T>
     using serialized_data_t = std::array<std::byte, sizeof(T)>;
-
-    template <size_t SIZE>
-    void StringToArray(const std::string& src, std::array<u_char, SIZE>& des)
-    {
-        des.fill(0);
-
-        auto charsToCopy = std::min(src.size(), SIZE - 1);
-
-        std::copy(std::begin(src), std::begin(src) + charsToCopy, std::begin(des));
-        des[charsToCopy] = '\0';
-    }
 
     struct MachineInfo {
         std::array<u_char, STRING_SIZE> boardModel;
@@ -31,18 +20,6 @@ namespace HeartBeat {
         std::array<u_char, STRING_SIZE> computerUUID;
         std::array<u_char, STRING_SIZE> computerFirmwareVersion;
         std::array<u_char, STRING_SIZE> computerFirmwareManufacturer;
-
-        MachineInfo()
-        {
-            StringToArray("Unknown", this->boardModel);
-            StringToArray("Unknown", this->boardSerial);
-            StringToArray("Unknown", this->computerModel);
-            StringToArray("Unknown", this->computerSerial);
-            StringToArray("Unknown", this->computerSKU);
-            StringToArray("Unknown", this->computerUUID);
-            StringToArray("Unknown", this->computerFirmwareVersion);
-            StringToArray("Unknown", this->computerFirmwareManufacturer);
-        }
 
         static void set(
             MachineInfo machInfo,
@@ -74,13 +51,6 @@ namespace HeartBeat {
         double pwr_cpuPackage;
         double pwr_cpuCore;
 
-        CpuInfo(double load, double maxTemp, double avgTemp, double packageTemp,
-                double coreVolt, double packagePower, double corePower)
-            : load_cpuTotal(load), temp_coreMax(maxTemp), temp_coreAvg(avgTemp),
-              temp_cpuPackage(packageTemp), volt_cpuCore(coreVolt),
-              pwr_cpuPackage(packagePower), pwr_cpuCore(corePower) {}
-
-        CpuInfo() = default;
     };
 
     struct GpuInfo {
@@ -91,25 +61,16 @@ namespace HeartBeat {
         double temp_gpuCore;
 
         double pwr_gpuPackage;
-
-        GpuInfo(double load, double clock, double temp, double power)
-            : load_gpuCore(load), clk_gpuCore(clock), temp_gpuCore(temp),
-              pwr_gpuPackage(power) {}
-
-        GpuInfo() = default;
     };
 
     struct DataPkt {
-        bool HeartBeat;
+        bool HeartBeat{};
 
-        MachineInfo machInfo;
-        CpuInfo cpuInfo;
-        GpuInfo gpuInfo;
+        MachineInfo machInfo{};
+        CpuInfo cpuInfo{};
+        GpuInfo gpuInfo{};
 
         std::chrono::time_point<std::chrono::system_clock> timestamp;
 
-        DataPkt(const MachineInfo& machInfo, const CpuInfo& cpuInfo, const GpuInfo& gpuInfo)
-            : HeartBeat(true), machInfo(machInfo), cpuInfo(cpuInfo), gpuInfo(gpuInfo),
-              timestamp(GetCurrentTimestamp()) {}
     };
 };
