@@ -1,0 +1,26 @@
+##
+# Copyright (c) 2023, Capri XXI (qxwzj@hotmail.com)
+#
+# ResolvInstallPrefix.cmake
+# Resolves the install prefix for the project.
+#
+# Results are reported in variables:
+#   - HEARTBEAT_INSTALL_PREFIX
+##
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+
+    unset(HEARTBEAT_INSTALL_PREFIX_LINUX)
+    if (DEFINED HEARTBEAT_INSTALL_PREFIX_WINDOWS AND NOT HEARTBEAT_INSTALL_PREFIX_WINDOWS STREQUAL "")
+        set(HEARTBEAT_INSTALL_PREFIX "${HEARTBEAT_INSTALL_PREFIX_WINDOWS}")
+    endif ()
+
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+
+    unset(HEARTBEAT_INSTALL_PREFIX_WINDOWS)
+    if (DEFINED HEARTBEAT_INSTALL_PREFIX_LINUX AND NOT HEARTBEAT_INSTALL_PREFIX_LINUX STREQUAL "")
+        set(HEARTBEAT_INSTALL_PREFIX "${HEARTBEAT_INSTALL_PREFIX_LINUX}")
+    endif ()
+
+
+endif()

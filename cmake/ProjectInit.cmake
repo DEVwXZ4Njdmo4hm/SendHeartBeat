@@ -14,9 +14,13 @@ message(STATUS "Build to ${TARGET_TRIPLE}")
 
 include (CheckCPUVendor)
 
-include(CheckOS)
+include (CheckOS)
 
 include (ApplyProjectConfig)
+
+include (ResolvInstallPrefix)
+
+message(STATUS "Install Prefix: ${HEARTBEAT_INSTALL_PREFIX}")
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 	include(SetupLLVM)
