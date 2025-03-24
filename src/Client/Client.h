@@ -8,6 +8,8 @@
 #include <iostream>
 #include <asio.hpp>
 
+#include <config.h>
+
 #if defined(_WIN32)
 
 #include <lhwm-cpp-wrapper.h>

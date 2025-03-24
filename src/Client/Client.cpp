@@ -4,14 +4,13 @@ using namespace HeartBeat;
 
 int main(int argc, char* argv[])// Initialize the COM library
 {
-    if (argc != 3)
+    if (argc != 2)
     {
-        std::println(stderr, "Usage: {} <server> <port>", argv[0]);
+        std::println(stderr, "Usage: {} <server>", argv[0]);
         return 1;
     }
 
     std::string server = argv[1];
-    port_t port = static_cast<port_t>(std::stoi(argv[2]));
 
     if (server.empty() or not IsValidIPv4(server))
     {
@@ -19,13 +18,7 @@ int main(int argc, char* argv[])// Initialize the COM library
         return 2;
     }
 
-    if (not port)
-    {
-        std::println(stderr, "Invalid port.");
-        return 3;
-    }
-
-    std::thread DataHandler_thr(DataHandler, server, port);
+    std::thread DataHandler_thr(DataHandler, server, listen_port);
 
     std::println(stdout, "HeartBeat Client started.");
     std::println(stdout, "Press any key to exit.");

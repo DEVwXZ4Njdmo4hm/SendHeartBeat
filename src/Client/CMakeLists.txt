@@ -15,7 +15,7 @@ target_sources(Client
 )
 
 set_target_properties(Client PROPERTIES CXX_STANDARD 23)
-target_include_directories(Client PRIVATE "${CMAKE_SOURCE_DIR}/include")
+target_include_directories(Client PRIVATE "${CMAKE_SOURCE_DIR}/include" "${CONFIG_DIR}")
 
 target_link_libraries(Client PRIVATE
         BOOST::PFR
