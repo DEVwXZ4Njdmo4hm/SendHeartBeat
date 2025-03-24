@@ -65,12 +65,10 @@ namespace HeartBeat {
     };
 
     struct DataPkt {
-        bool HeartBeat{};
+        int64_t timestamp;
 
         MachineInfo machInfo{};
         CpuInfo cpuInfo{};
         GpuInfo gpuInfo{};
-
-        std::chrono::time_point<std::chrono::system_clock> timestamp;
     };
 };
