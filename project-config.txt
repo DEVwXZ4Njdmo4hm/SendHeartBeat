@@ -11,3 +11,7 @@ PFR_DIR = ${CMAKE_SOURCE_DIR}/3rd-party/pfr
 LHWM_WRAPPER_DIR = ${CMAKE_SOURCE_DIR}/3rd-party/lhwm-cpp-wrapper
 
 SQLITE_META_DIR = ${CMAKE_SOURCE_DIR}/3rd-party/sqlite3
+
+SERVER_DB_PATH = $ENV{HOME}/.local/share/HeartBeat/record.db
+
+LISTEN_PORT = 30158
