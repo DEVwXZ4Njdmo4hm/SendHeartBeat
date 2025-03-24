@@ -52,10 +52,10 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
         if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
             set(CLIENT_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/HeartBeat/Client")
         else()
-            set(CLIENT_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/HeartBeat/Client/bin")
+            set(CLIENT_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/HeartBeat/bin")
         endif()
     else()
-        set (CLIENT_INSTALL_PREFIX "${HEARTBEAT_INSTALL_PREFIX}/Client")
+        set (CLIENT_INSTALL_PREFIX "${HEARTBEAT_INSTALL_PREFIX}/bin")
     endif ()
 
     install(TARGETS Client
