@@ -20,7 +20,6 @@ void HeartBeat::WriteToDB(const DataPkt &data)
     const auto createTableSQL = R"(
         CREATE TABLE IF NOT EXISTS Record (
             timestamp INTEGER PRIMARY KEY,
-            HeartBeat INTEGER,
             boardModel TEXT,
             boardSerial TEXT,
             computerModel TEXT,
@@ -45,11 +44,11 @@ void HeartBeat::WriteToDB(const DataPkt &data)
 
     const auto insertSQL = R"(
     INSERT INTO Record (
-        timestamp, HeartBeat,
+        timestamp,
         boardModel, boardSerial, computerModel, computerSerial, computerSKU, computerUUID, computerFirmwareVersion, computerFirmwareManufacturer,
         load_cpuTotal, temp_coreMax, temp_coreAvg, temp_cpuPackage, volt_cpuCore, pwr_cpuPackage, pwr_cpuCore,
         load_gpuCore, clk_gpuCore, temp_gpuCore, pwr_gpuPackage
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     )";
 
     char* errMsg = nullptr;
@@ -78,36 +77,32 @@ void HeartBeat::WriteToDB(const DataPkt &data)
         return;
     }
 
-    auto timestamp =
-        std::chrono::duration_cast<std::chrono::milliseconds>(data.timestamp.time_since_epoch()).count();
-
-    sqlite3_bind_int64(stmt.get(), 1, timestamp);
-    sqlite3_bind_int(stmt.get(), 2, data.HeartBeat);
+    sqlite3_bind_int64(stmt.get(), 1, data.timestamp);
 
     // Bind machine info
-    sqlite3_bind_text(stmt.get(), 3, UCharArrayToString(data.machInfo.boardModel).c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt.get(), 4, UCharArrayToString(data.machInfo.boardSerial).c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt.get(), 5, UCharArrayToString(data.machInfo.computerModel).c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt.get(), 6, UCharArrayToString(data.machInfo.computerSerial).c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt.get(), 7, UCharArrayToString(data.machInfo.computerSKU).c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt.get(), 8, UCharArrayToString(data.machInfo.computerUUID).c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt.get(), 9, UCharArrayToString(data.machInfo.computerFirmwareVersion).c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt.get(), 10, UCharArrayToString(data.machInfo.computerFirmwareManufacturer).c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt.get(), 2, UCharArrayToString(data.machInfo.boardModel).c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt.get(), 3, UCharArrayToString(data.machInfo.boardSerial).c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt.get(), 4, UCharArrayToString(data.machInfo.computerModel).c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt.get(), 5, UCharArrayToString(data.machInfo.computerSerial).c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt.get(), 6, UCharArrayToString(data.machInfo.computerSKU).c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt.get(), 7, UCharArrayToString(data.machInfo.computerUUID).c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt.get(), 8, UCharArrayToString(data.machInfo.computerFirmwareVersion).c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt.get(), 9, UCharArrayToString(data.machInfo.computerFirmwareManufacturer).c_str(), -1, SQLITE_TRANSIENT);
 
     // Bind CPU Sensor data
-    sqlite3_bind_double(stmt.get(), 11, data.cpuInfo.load_cpuTotal);
-    sqlite3_bind_double(stmt.get(), 12, data.cpuInfo.temp_coreMax);
-    sqlite3_bind_double(stmt.get(), 13, data.cpuInfo.temp_coreAvg);
-    sqlite3_bind_double(stmt.get(), 14, data.cpuInfo.temp_cpuPackage);
-    sqlite3_bind_double(stmt.get(), 15, data.cpuInfo.volt_cpuCore);
-    sqlite3_bind_double(stmt.get(), 16, data.cpuInfo.pwr_cpuPackage);
-    sqlite3_bind_double(stmt.get(), 17, data.cpuInfo.pwr_cpuCore);
+    sqlite3_bind_double(stmt.get(), 10, data.cpuInfo.load_cpuTotal);
+    sqlite3_bind_double(stmt.get(), 11, data.cpuInfo.temp_coreMax);
+    sqlite3_bind_double(stmt.get(), 12, data.cpuInfo.temp_coreAvg);
+    sqlite3_bind_double(stmt.get(), 13, data.cpuInfo.temp_cpuPackage);
+    sqlite3_bind_double(stmt.get(), 14, data.cpuInfo.volt_cpuCore);
+    sqlite3_bind_double(stmt.get(), 15, data.cpuInfo.pwr_cpuPackage);
+    sqlite3_bind_double(stmt.get(), 16, data.cpuInfo.pwr_cpuCore);
 
     // Bind GPU Sensor data
-    sqlite3_bind_double(stmt.get(), 18, data.gpuInfo.load_gpuCore);
-    sqlite3_bind_double(stmt.get(), 19, data.gpuInfo.clk_gpuCore);
-    sqlite3_bind_double(stmt.get(), 20, data.gpuInfo.temp_gpuCore);
-    sqlite3_bind_double(stmt.get(), 21, data.gpuInfo.pwr_gpuPackage);
+    sqlite3_bind_double(stmt.get(), 17, data.gpuInfo.load_gpuCore);
+    sqlite3_bind_double(stmt.get(), 18, data.gpuInfo.clk_gpuCore);
+    sqlite3_bind_double(stmt.get(), 19, data.gpuInfo.temp_gpuCore);
+    sqlite3_bind_double(stmt.get(), 20, data.gpuInfo.pwr_gpuPackage);
 
     rc = sqlite3_step(stmt.get());
     if (rc != SQLITE_DONE)
