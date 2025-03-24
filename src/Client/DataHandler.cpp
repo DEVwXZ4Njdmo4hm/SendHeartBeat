@@ -33,23 +33,16 @@ void HeartBeat::DataHandler(std::string server, port_t port)
     std::println("Computer Firmware Manufacturer: {}", UCharArrayToString(machInfo.computerFirmwareManufacturer));
     std::println("\n\n");
 
-    CpuInfo cpuTemp {};
-    GpuInfo gpuTemp {};
-
     GetCpuSensorID();
     GetGpuSensorID();
 
     while (worker_signal)
     {
-        GetCpuInfo(cpuTemp);
-        GetGpuInfo(gpuTemp);
-
         DataPkt dataPkt;
-        dataPkt.cpuInfo = cpuTemp;
-        dataPkt.gpuInfo = gpuTemp;
+        GetCpuInfo(dataPkt.cpuInfo);
+        GetGpuInfo(dataPkt.gpuInfo);
         dataPkt.machInfo = machInfo;
-        dataPkt.HeartBeat = true;
-        dataPkt.timestamp = GetCurrentTimestamp();
+        dataPkt.timestamp = LL_GetCurrentTimeStamp();
 
         serialized_data_t<DataPkt> serialized;
 
