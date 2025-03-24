@@ -15,4 +15,6 @@ namespace HeartBeat {
     inline std::string db_path = "@SERVER_DB_PATH@";
 
     inline port_t listen_port = @LISTEN_PORT@;
+
+    inline int sampling_interval = @SAMPLING_INTERVAL@;
 }
