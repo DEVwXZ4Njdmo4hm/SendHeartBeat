@@ -72,6 +72,5 @@ namespace HeartBeat {
         GpuInfo gpuInfo{};
 
         std::chrono::time_point<std::chrono::system_clock> timestamp;
-
     };
 };

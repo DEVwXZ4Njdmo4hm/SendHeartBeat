@@ -12,6 +12,16 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 include(ProjectInit)
 
+set(CONFIG_DIR "${CMAKE_BINARY_DIR}/include/")
+
+file (MAKE_DIRECTORY "${SERVER_CONFIG_DIR}")
+
+configure_file(
+        "${CMAKE_SOURCE_DIR}/include/config.h.in"
+        "${CONFIG_DIR}/config.h"
+        @ONLY
+)
+
 add_subdirectory(src/Client)
 add_subdirectory(src/Server)
 

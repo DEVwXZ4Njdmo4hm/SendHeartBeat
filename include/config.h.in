@@ -1,0 +1,18 @@
+/*
+ * config.h
+ * CMake auto-generated header file, do not edit it.
+ * Edit @CMAKE_SOURCE_DIR@/include/config.h.in if you want to change this header.
+ * Once you edited config.h.in, re-generate target.
+ */
+
+#pragma once
+
+#include <string>
+
+namespace HeartBeat {
+    using port_t = uint16_t;
+
+    inline std::string db_path = "@SERVER_DB_PATH@";
+
+    inline port_t listen_port = @LISTEN_PORT@;
+}
