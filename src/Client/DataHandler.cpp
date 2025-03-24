@@ -35,15 +35,14 @@ void HeartBeat::DataHandler(std::string server, port_t port)
 
     GetCpuSensorID();
     GetGpuSensorID();
+    DataPkt dataPkt;
+    GetCpuInfo(dataPkt.cpuInfo);
+    GetGpuInfo(dataPkt.gpuInfo);
+    dataPkt.machInfo = machInfo;
+    dataPkt.timestamp = LL_GetCurrentTimeStamp();
 
     while (worker_signal)
     {
-        DataPkt dataPkt;
-        GetCpuInfo(dataPkt.cpuInfo);
-        GetGpuInfo(dataPkt.gpuInfo);
-        dataPkt.machInfo = machInfo;
-        dataPkt.timestamp = LL_GetCurrentTimeStamp();
-
         serialized_data_t<DataPkt> serialized;
 
         SerializeStruct(serialized, dataPkt);
@@ -51,7 +50,21 @@ void HeartBeat::DataHandler(std::string server, port_t port)
 
         std::println(stdout, "Data sent to server: {}:{}", server, port);
 
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::thread cpuInfoThread(GetCpuInfo, std::ref(dataPkt.cpuInfo));
+        std::thread gpuInfoThread(GetGpuInfo, std::ref(dataPkt.gpuInfo));
+        dataPkt.timestamp = LL_GetCurrentTimeStamp();
+
+        std::this_thread::sleep_for(std::chrono::seconds(sampling_interval));
+
+        if (cpuInfoThread.joinable())
+        {
+            cpuInfoThread.join();
+        }
+
+        if (gpuInfoThread.joinable())
+        {
+            gpuInfoThread.join();
+        }
     }
 }
 
