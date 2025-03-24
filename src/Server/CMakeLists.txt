@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.28)
 
 add_executable(Server)
 
+
 target_sources(Server
         PRIVATE
         Server.cpp
@@ -11,7 +12,7 @@ target_sources(Server
 )
 
 set_target_properties(Server PROPERTIES CXX_STANDARD 23)
-target_include_directories(Server PRIVATE "${CMAKE_SOURCE_DIR}/include")
+target_include_directories(Server PRIVATE "${CMAKE_SOURCE_DIR}/include" "${CONFIG_DIR}")
 
 target_link_libraries(Server PRIVATE
         BOOST::PFR

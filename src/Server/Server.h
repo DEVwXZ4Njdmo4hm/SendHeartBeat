@@ -11,16 +11,17 @@
 #include <DataPkt.h>
 #include <Utils.h>
 
-namespace HeartBeat {
+#include <config.h>
 
+namespace HeartBeat {
     inline std::mutex msg_queue_mutex;
     inline std::deque<serialized_data_t<DataPkt>> msg_queue;
     inline std::atomic_bool work_signal { true };
     inline std::atomic_bool watcher_halt { false };
 
-    void Watcher(port_t port);
+    void Watcher();
 
     void DataHandler();
 
-    void WriteToDB(DataPkt& data);
+    void WriteToDB(const DataPkt& data);
 }
