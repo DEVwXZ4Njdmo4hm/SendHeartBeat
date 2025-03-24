@@ -12,6 +12,7 @@ namespace HeartBeat {
     template <typename T>
     using serialized_data_t = std::array<std::byte, sizeof(T)>;
 
+#pragma pack(push, 1)
     struct MachineInfo {
         std::array<u_char, STRING_SIZE> boardModel;
         std::array<u_char, STRING_SIZE> boardSerial;
@@ -65,12 +66,17 @@ namespace HeartBeat {
     };
 
     struct DataPkt {
-        bool HeartBeat{};
+        int64_t timestamp;
 
         MachineInfo machInfo{};
         CpuInfo cpuInfo{};
         GpuInfo gpuInfo{};
-
-        std::chrono::time_point<std::chrono::system_clock> timestamp;
     };
+#pragma pack(pop)
+
+    // Write assertions to check the size of the struct
+    static_assert(sizeof(MachineInfo) == 8 * STRING_SIZE, "MachineInfo size mismatch");
+    static_assert(sizeof(CpuInfo) == 7 * sizeof(double), "CpuInfo size mismatch");
+    static_assert(sizeof(GpuInfo) == 4 * sizeof(double), "GpuInfo size mismatch");
+    static_assert(sizeof(DataPkt) == sizeof(int64_t) + sizeof(MachineInfo) + sizeof(CpuInfo) + sizeof(GpuInfo), "DataPkt size mismatch");
 };

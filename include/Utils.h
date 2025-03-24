@@ -65,4 +65,10 @@ namespace HeartBeat {
     inline std::chrono::time_point<std::chrono::system_clock> GetCurrentTimestamp() {
         return std::chrono::system_clock::now();
     }
+
+    inline int64_t LL_GetCurrentTimeStamp() {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(
+            GetCurrentTimestamp().time_since_epoch()
+            ).count();
+    }
 }
