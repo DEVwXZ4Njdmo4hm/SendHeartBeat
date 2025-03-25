@@ -47,27 +47,16 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
             COMMENT "Copying LHWM-WRAPPER DLL to output directory"
     )
 
-    set (CLIENT_INSTALL_PREFIX "")
-    if (NOT DEFINED HEARTBEAT_INSTALL_PREFIX)
-        if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-            set(CLIENT_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/HeartBeat/Client")
-        else()
-            set(CLIENT_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/HeartBeat/bin")
-        endif()
-    else()
-        set (CLIENT_INSTALL_PREFIX "${HEARTBEAT_INSTALL_PREFIX}/bin")
-    endif ()
+endif ()
 
-    install(TARGETS Client
-            RUNTIME DESTINATION "${CLIENT_INSTALL_PREFIX}"
-            LIBRARY DESTINATION "${CLIENT_INSTALL_PREFIX}"
-            ARCHIVE DESTINATION "${CLIENT_INSTALL_PREFIX}"
+install(TARGETS Client
+        RUNTIME DESTINATION "${HEARTBEAT_INSTALL_PREFIX}/bin"
+        LIBRARY DESTINATION "${HEARTBEAT_INSTALL_PREFIX}/lib"
+)
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    install(
+            FILES $<TARGET_PROPERTY:LHWM::LHWM-WRAPPER,IMPORTED_LOCATION_$<UPPER_CASE:$<CONFIG>>>
+            DESTINATION "${HEARTBEAT_INSTALL_PREFIX}/bin"
     )
-
-    if (WIN32)
-        install(
-                FILES $<TARGET_PROPERTY:LHWM::LHWM-WRAPPER,IMPORTED_LOCATION_$<UPPER_CASE:$<CONFIG>>>
-                DESTINATION "${CLIENT_INSTALL_PREFIX}"
-        )
-    endif ()
 endif ()
