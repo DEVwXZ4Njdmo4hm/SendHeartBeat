@@ -8,7 +8,7 @@ target_sources(Server
         Server.cpp
         Watcher.cpp
         DataHandler.cpp
-        WriteToDB.cpp
+        DBOperations.cpp
 )
 
 set_target_properties(Server PROPERTIES CXX_STANDARD 23)

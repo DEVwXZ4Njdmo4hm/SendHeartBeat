@@ -2,79 +2,66 @@
 
 using namespace HeartBeat;
 
-void HeartBeat::WriteToDB(const DataPkt &data)
+bool HeartBeat::OpenDB()
 {
-    sqlite3 *db_raw = nullptr;
     int rc = sqlite3_open_v2(
-        db_path.c_str(), &db_raw,
+        db_path.c_str(), &db,
         SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
         nullptr);
 
-    const std::unique_ptr<sqlite3, decltype([](sqlite3 *db) { sqlite3_close_v2(db); } )> db(db_raw);
-
     if (rc != SQLITE_OK)
     {
-        std::println(stderr, "Can't open database: {}", sqlite3_errmsg(db.get()));
-        return;
+        std::println(stderr, "Can't open database: {}", sqlite3_errmsg(db));
+        return false;
     }
-    const auto createTableSQL = R"(
-        CREATE TABLE IF NOT EXISTS Record (
-            timestamp INTEGER PRIMARY KEY,
-            boardModel TEXT,
-            boardSerial TEXT,
-            computerModel TEXT,
-            computerSerial TEXT,
-            computerSKU TEXT,
-            computerUUID TEXT,
-            computerFirmwareVersion TEXT,
-            computerFirmwareManufacturer TEXT,
-            load_cpuTotal REAL,
-            temp_coreMax REAL,
-            temp_coreAvg REAL,
-            temp_cpuPackage REAL,
-            volt_cpuCore REAL,
-            pwr_cpuPackage REAL,
-            pwr_cpuCore REAL,
-            load_gpuCore REAL,
-            clk_gpuCore REAL,
-            temp_gpuCore REAL,
-            pwr_gpuPackage REAL
-        );
-    )";
-
-    const auto insertSQL = R"(
-    INSERT INTO Record (
-        timestamp,
-        boardModel, boardSerial, computerModel, computerSerial, computerSKU, computerUUID, computerFirmwareVersion, computerFirmwareManufacturer,
-        load_cpuTotal, temp_coreMax, temp_coreAvg, temp_cpuPackage, volt_cpuCore, pwr_cpuPackage, pwr_cpuCore,
-        load_gpuCore, clk_gpuCore, temp_gpuCore, pwr_gpuPackage
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-    )";
 
     char* errMsg = nullptr;
-    rc = sqlite3_exec(db.get(), createTableSQL, nullptr, nullptr, &errMsg);
+    rc = sqlite3_exec(db, createTableSQL, nullptr, nullptr, &errMsg);
     if (rc != SQLITE_OK)
     {
         std::println(stderr, "SQL error: {}", errMsg);
         sqlite3_free(errMsg);
-        return;
+
+        CloseDB();
+
+        return false;
     }
 
-    rc = sqlite3_exec(db.get(), "BEGIN TRANSACTION", nullptr, nullptr, &errMsg);
+    std::println(stdout, "Database opened successfully");
+    return true;
+}
+
+bool HeartBeat::CloseDB()
+{
+    if (db)
+    {
+        sqlite3_close(db);
+        db = nullptr;
+    }
+
+    return true;
+}
+
+
+bool HeartBeat::WriteToDB(const DataPkt &data)
+{
+    char* errMsg = nullptr;
+
+    auto rc = sqlite3_exec(db, "BEGIN TRANSACTION", nullptr, nullptr, &errMsg);
     if (rc != SQLITE_OK)
     {
         std::println(stderr, "SQL error: {}", errMsg);
         sqlite3_free(errMsg);
-        return;
+        return false;
     }
 
     sqlite3_stmt *stmt_raw = nullptr;
-    rc = sqlite3_prepare_v2(db.get(), insertSQL, -1, &stmt_raw, nullptr);
+    rc = sqlite3_prepare_v2(db, insertSQL, -1, &stmt_raw, nullptr);
     const std::unique_ptr<sqlite3_stmt, decltype([](sqlite3_stmt *stmt) { sqlite3_finalize(stmt); } )> stmt(stmt_raw);
     if (rc != SQLITE_OK)
     {
-        std::println(stderr, "SQL error: {}", sqlite3_errmsg(db.get()));
-        return;
+        std::println(stderr, "SQL error: {}", sqlite3_errmsg(db));
+        return false;
     }
 
     sqlite3_bind_int64(stmt.get(), 1, data.timestamp);
@@ -107,16 +94,20 @@ void HeartBeat::WriteToDB(const DataPkt &data)
     rc = sqlite3_step(stmt.get());
     if (rc != SQLITE_DONE)
     {
-        std::println(stderr, "Failed to insert data: {}", sqlite3_errmsg(db.get()));
-        sqlite3_exec(db.get(), "ROLLBACK", nullptr, nullptr, &errMsg);
-        return;
+        std::println(stderr, "Failed to insert data: {}", sqlite3_errmsg(db));
+        sqlite3_exec(db, "ROLLBACK", nullptr, nullptr, &errMsg);
+        return false;
     }
 
-    rc = sqlite3_exec(db.get(), "COMMIT", nullptr, nullptr, &errMsg);
+    rc = sqlite3_exec(db, "COMMIT", nullptr, nullptr, &errMsg);
     if (rc != SQLITE_OK)
     {
         std::println(stderr, "SQL failed to commit transaction: {}", errMsg);
         sqlite3_free(errMsg);
-        sqlite3_exec(db.get(), "ROLLBACK", nullptr, nullptr, &errMsg);
+        sqlite3_exec(db, "ROLLBACK", nullptr, nullptr, &errMsg);
+
+        return false;
     }
+
+    return true;
 }

@@ -8,18 +8,28 @@ void HeartBeat::DataHandler()
     {
         if (not msg_queue.empty())
         {
-            serialized_data_t<DataPkt> buffer;
-
             {
                 std::lock_guard lock(msg_queue_mutex);
-                buffer = msg_queue.front();
+                wait_queue.push(msg_queue.front());
                 msg_queue.pop_front();
             }
+        }
+
+        auto retries = 0, max_retries = 10;
+
+        while (not wait_queue.empty())
+        {
+            if (retries > max_retries and work_signal)
+                break;
 
             DataPkt msg {};
-            DeserializeStruct(buffer, msg);
+            DeserializeStruct(wait_queue.front(), msg);
 
-            WriteToDB(msg);
+            if (WriteToDB(msg))
+                wait_queue.pop();
+            else
+                retries += 1;
+
         }
     }
 }

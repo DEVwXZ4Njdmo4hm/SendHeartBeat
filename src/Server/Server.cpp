@@ -4,6 +4,12 @@ using namespace HeartBeat;
 
 int main()
 {
+    if (not OpenDB())
+    {
+        std::println(stderr, "Failed to open database");
+        return 1;
+    }
+
     std::thread watcher_thr(Watcher);
     std::thread data_handler_thr(DataHandler);
 
@@ -18,6 +24,8 @@ int main()
     if (data_handler_thr.joinable())
         data_handler_thr.join();
 
+
+    CloseDB();
     std::println(stdout, "Server stopped");
 
     return 0;
